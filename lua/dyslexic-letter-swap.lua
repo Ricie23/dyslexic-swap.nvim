@@ -26,7 +26,7 @@ function M.setup()
   vim.keymap.set("n", "z,", swap_letters, { desc = "Swap letters to the left" })
 
   -- Insert mode mapping: <C-x>
-  vim.keymap.set("i", "<M-m>", function()
+  vim.keymap.set("i", "<C-q>", function()
     -- Save current mode position
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
