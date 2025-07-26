@@ -1,8 +1,11 @@
 -- ~/.config/nvim/lua/dyslexic_swap/init.lua
 local M = {}
 
-function M.swap_letters()
+function M.swap_letters(offset)
+	offset = offset or 0
 	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	col = col + offset
+
 	if col < 2 then
 		vim.notify("Not enough characters to swap", vim.log.levels.WARN)
 		return
@@ -17,7 +20,7 @@ function M.swap_letters()
 	local new_before = before:sub(1, -3) .. c2 .. c1
 
 	vim.api.nvim_set_current_line(new_before .. after)
-	vim.api.nvim_win_set_cursor(0, { row, col })
+	vim.api.nvim_win_set_cursor(0, { row, col - offset }) -- reset cursor position
 end
 
 function M.setup()
@@ -29,7 +32,7 @@ function M.setup()
 		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 
 		vim.schedule(function()
-			M.swap_letters()
+			M.swap_letters(-1) -- adjust for insert mode
 			vim.api.nvim_feedkeys("a", "n", false)
 		end)
 	end, { desc = "Swap letters to the left in insert mode" })
