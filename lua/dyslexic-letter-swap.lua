@@ -17,7 +17,6 @@ local function swap_letters()
 
 	vim.api.nvim_set_current_line(new_before .. after)
 	vim.api.nvim_win_set_cursor(0, { row, col })
-	vim.notify("Swapped '" .. c1 .. "' and '" .. c2 .. "'", vim.log.levels.INFO)
 end
 
 function M.setup()
