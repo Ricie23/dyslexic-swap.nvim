@@ -21,17 +21,18 @@ function M.swap_letters()
 end
 
 function M.setup()
-	-- Normal mode mapping: z,
+	-- Normal mode mapping
 	vim.keymap.set("n", "z,", M.swap_letters, { desc = "Swap letters to the left" })
 
-	-- Insert mode mapping: <C-x>
-vim.keymap.set("i", "<C-t>", function()
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+	-- Insert mode mapping
+	vim.keymap.set("i", "<C-t>", function()
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 
-	vim.schedule(function()
-		require("dyslexic_swap").swap_letters()
-		vim.api.nvim_feedkeys("a", "n", false)
-	end)
-end, { desc = "Swap letters to the left in insert mode" })
+		vim.schedule(function()
+			M.swap_letters()
+			vim.api.nvim_feedkeys("a", "n", false)
+		end)
+	end, { desc = "Swap letters to the left in insert mode" })
 end
+
 return M
