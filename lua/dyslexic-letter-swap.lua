@@ -1,39 +1,43 @@
+-- ~/.config/nvim/lua/dyslexic_swap/init.lua
 local M = {}
 
+local function swap_letters()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  if col < 2 then
+    vim.notify("Not enough characters to swap", vim.log.levels.WARN)
+    return
+  end
+
+  local line = vim.api.nvim_get_current_line()
+  local before = line:sub(1, col)
+  local after = line:sub(col + 1)
+
+  local c1 = before:sub(-2, -2)
+  local c2 = before:sub(-1, -1)
+  local new_before = before:sub(1, -3) .. c2 .. c1
+
+  vim.api.nvim_set_current_line(new_before .. after)
+  vim.api.nvim_win_set_cursor(0, { row, col })
+  vim.notify("Swapped '" .. c1 .. "' and '" .. c2 .. "'", vim.log.levels.INFO)
+end
+
 function M.setup()
-  -- Normal mode swap: z,
-  vim.keymap.set("n", "z,", function()
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-    if col < 2 then
-      vim.notify("Not enough characters to swap", vim.log.levels.WARN)
-      return
-    end
+  -- Normal mode mapping: z,
+  vim.keymap.set("n", "z,", swap_letters, { desc = "Swap letters to the left" })
 
-    local line = vim.api.nvim_get_current_line()
-    local i1 = col       -- cursor is after this character
-    local i2 = col - 1   -- character just before that
-
-    local c1 = line:sub(i2 + 1, i2 + 1)
-    local c2 = line:sub(i1 + 1, i1 + 1)
-
-    local new_line = line:sub(1, i2) .. c2 .. c1 .. line:sub(i1 + 2)
-
-    vim.api.nvim_set_current_line(new_line)
-    vim.api.nvim_win_set_cursor(0, { row, col })
-    vim.notify("Swapped '" .. c1 .. "' and '" .. c2 .. "'", vim.log.levels.INFO)
-  end, { desc = "Swap letters to the left of the cursor" })
-
-  -- Insert mode swap: <C-l>
+  -- Insert mode mapping: <C-x>
   vim.keymap.set("i", "<C-x>", function()
-    -- Exit insert mode
+    -- Save current mode position
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+
+    -- Leave insert mode and defer swap to next tick
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 
-    -- Perform swap after returning to normal mode
-    vim.schedule(function()
-      vim.cmd("normal! z,")
+    vim.defer_fn(function()
+      swap_letters()
       -- Return to insert mode
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("a", true, false, true), "n", false)
-    end)
+    end, 10) -- 10ms delay is usually enough
   end, { desc = "Swap letters to the left in insert mode" })
 end
 
