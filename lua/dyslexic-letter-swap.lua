@@ -1,4 +1,3 @@
--- ~/.config/nvim/lua/dyslexic_swap/init.lua
 local M = {}
 
 local function swap_letters()
@@ -22,19 +21,6 @@ local function swap_letters()
 end
 
 function M.setup()
-	-- Normal mode mapping: z,
 	vim.keymap.set("n", "z,", swap_letters, { desc = "Swap letters to the left" })
-
-	-- Insert mode mapping: <C-x>
-	vim.keymap.set("i", "<C-t>", function()
-		local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-
-		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
-
-		vim.defer_fn(function()
-			require("dyslexic_swap").swap_letters()
-			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("a", true, false, true), "n", false)
-		end, 10)
-	end, { desc = "Swap letters to the left in insert mode" })
 end
 return M
