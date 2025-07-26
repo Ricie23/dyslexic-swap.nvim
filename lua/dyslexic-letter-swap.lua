@@ -24,7 +24,7 @@ function M.setup()
   end, { desc = "Swap letters to the left of the cursor" })
 
   -- Insert mode swap: <C-l>
-  vim.keymap.set("i", "<C-l>", function()
+  vim.keymap.set("i", "<C-x>", function()
     -- Exit insert mode
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 
