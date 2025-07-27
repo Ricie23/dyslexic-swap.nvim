@@ -20,20 +20,34 @@ function M.swap_letters_at(col)
     vim.api.nvim_win_set_cursor(0, { row, col })
 end
 
-function M.setup()
-    vim.keymap.set("n", "z,", function()
+-- Default key mappings (users can override)
+local default_opts = {
+    normal_mode = "z,",
+    insert_mode = "<C-x>",
+}
+
+function M.setup(opts)
+    opts = vim.tbl_extend("force", default_opts, opts or {})
+
+    -- Clear existing mappings to avoid duplicates (optional)
+    vim.keymap.del("n", opts.normal_mode)
+    vim.keymap.del("i", opts.insert_mode)
+
+    -- Normal mode mapping
+    vim.keymap.set("n", opts.normal_mode, function()
         local _, col = unpack(vim.api.nvim_win_get_cursor(0))
         M.swap_letters_at(col)
     end, { desc = "Swap letters to the left of the cursor" })
 
-    vim.keymap.set("i", "<C-x>", function()
+    -- Insert mode mapping
+    vim.keymap.set("i", opts.insert_mode, function()
         local _, col = unpack(vim.api.nvim_win_get_cursor(0))
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
         vim.schedule(function()
             M.swap_letters_at(col)
             vim.api.nvim_feedkeys("i", "n", false)
         end)
-    end, { desc = "Swap letters to the left of the cursor" })
+    end, { desc = "Swap last two typed letters" })
 end
 
 return M
