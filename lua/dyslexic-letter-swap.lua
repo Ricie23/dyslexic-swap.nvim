@@ -27,11 +27,11 @@ function M.setup()
     end, { desc = "Swap letters to the left of the cursor" })
 
     vim.keymap.set("i", "<C-x>", function()
-        local _, col = unpack(vim.api.nvim_win_get_cursor(0)) -- get col before <Esc>
+        local _, col = unpack(vim.api.nvim_win_get_cursor(0))
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
         vim.schedule(function()
             M.swap_letters_at(col)
-            vim.api.nvim_feedkeys("a", "n", false) -- go back to insert
+            vim.api.nvim_feedkeys("i", "n", false)
         end)
     end, { desc = "Swap letters to the left of the cursor" })
 end
