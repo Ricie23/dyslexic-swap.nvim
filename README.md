@@ -11,15 +11,15 @@ A tiny Neovim plugin to quickly swap two letters around the cursor — especiall
 - Swap the two letters around the cursor in **normal** or **insert** mode.
 - Configurable keybindings.
 - Minimal and fast — ideal for a lightweight workflow.
-  Default keybindings:
+- Default keybindings:
   ```
     normal_mode = " z, "
     insert_mode = " <C-x> "
   ```
 
   ### Available Options
-  -Change the keymappings for both Insert and Normal Mode
-  -Disable Insert or Normal mode by setting **false**
+  - Change the keymappings for both Insert and Normal Mode
+  - Disable Insert or Normal mode by setting **false**
   
 ```lua
   opts = {
