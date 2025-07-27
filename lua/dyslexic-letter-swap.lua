@@ -27,27 +27,27 @@ local default_opts = {
 }
 
 function M.setup(opts)
-    opts = vim.tbl_extend("force", default_opts, opts or {})
+	opts = opts or {}
+	local normal_key = opts.normal_mode ~= false and (opts.normal_mode or "z,")
+	local insert_key = opts.insert_mode ~= false and (opts.insert_mode or "<C-x>")
 
-    -- Clear existing mappings to avoid duplicates (optional)
-    vim.keymap.del("n", opts.normal_mode)
-    vim.keymap.del("i", opts.insert_mode)
+	if normal_key then
+		vim.keymap.set("n", normal_key, function()
+			local _, col = unpack(vim.api.nvim_win_get_cursor(0))
+			M.swap_letters_at(col)
+		end, { desc = "Swap letters to the left of the cursor" })
+	end
 
-    -- Normal mode mapping
-    vim.keymap.set("n", opts.normal_mode, function()
-        local _, col = unpack(vim.api.nvim_win_get_cursor(0))
-        M.swap_letters_at(col)
-    end, { desc = "Swap letters to the left of the cursor" })
-
-    -- Insert mode mapping
-    vim.keymap.set("i", opts.insert_mode, function()
-        local _, col = unpack(vim.api.nvim_win_get_cursor(0))
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
-        vim.schedule(function()
-            M.swap_letters_at(col)
-            vim.api.nvim_feedkeys("i", "n", false)
-        end)
-    end, { desc = "Swap last two typed letters" })
+	if insert_key then
+		vim.keymap.set("i", insert_key, function()
+			local _, col = unpack(vim.api.nvim_win_get_cursor(0))
+			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+			vim.schedule(function()
+				M.swap_letters_at(col)
+				vim.api.nvim_feedkeys("i", "n", false)
+			end)
+		end, { desc = "Swap last two typed letters" })
+	end
 end
 
 return M
