@@ -1,6 +1,5 @@
 local M = {}
 
--- Swap two characters at a given position in the line
 local function swap_chars(line, left_idx)
     if left_idx < 1 or left_idx >= #line then
         return nil
@@ -18,12 +17,11 @@ function M.swap_letters(mode)
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
 
-    -- Abort early if not enough characters to the left
-    if col < 2 then
+    if (mode == "insert" and col < 2) or (mode ~= "insert" and col < 2) then
         return
     end
 
-    local left_idx = col - 1 -- character index to the *left* of the cursor
+    local left_idx = mode == "insert" and col - 2 or col - 1
     local new_line = swap_chars(line, left_idx)
 
     if new_line then
@@ -33,12 +31,10 @@ function M.swap_letters(mode)
 end
 
 function M.setup()
-    -- Normal mode: swap two letters to the left of the cursor
     vim.keymap.set("n", "z,", function()
         M.swap_letters("normal")
     end, { desc = "Swap letters to the left of the cursor" })
 
-    -- Insert mode: swap the two letters before the cursor
     vim.keymap.set("i", "<C-x>", function()
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 
