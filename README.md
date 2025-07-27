@@ -36,7 +36,7 @@ Add this to your Lazy plugin spec:
 ```lua
 return {
   {
-    "ricie23/nvim-dyslexic-swap",
+    "ricie23/dyslexic-swap.nvim",
     lazy = false,
     config = function()
     opts = {}
